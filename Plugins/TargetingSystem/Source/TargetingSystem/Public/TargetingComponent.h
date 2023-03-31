@@ -54,6 +54,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	FName TargetTag;
 
+	// Actor class used to find targets
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
+	TSubclassOf<AActor> TargetClass;
+
 	// Trace channel used to detect targets
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	TEnumAsByte<ETraceTypeQuery> TargetTraceChannel;
@@ -70,18 +74,18 @@ protected:
 	FTimerHandle SearchTimerHandle;
 
 	// Player character reference
-	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	ACharacter* PlayerCharacter;
 
 	// Player camera reference
-	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	UCameraComponent* PlayerCamera;
 
 	// Used to start timer initially
 	bool bStartTimer;
 
 	// Enable the printing of warnings and errors if any are encountered
-	UPROPERTY(EditAnywhere, Category = "Targeting")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	bool bDebug;
 
 protected:

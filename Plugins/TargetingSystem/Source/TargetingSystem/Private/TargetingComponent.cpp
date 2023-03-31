@@ -10,7 +10,7 @@
 UTargetingComponent::UTargetingComponent()
 	: SearchRadius(0.0f), SearchInterval(0.0f), MaxHorizontalVisionAngle(0.0f), MaxVerticalVisionAngle(0.0f), 
 	CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), TargetTag(""), 
-	TargetTraceChannel(ETraceTypeQuery::TraceTypeQuery1), BlockingTraceChannel(ETraceTypeQuery::TraceTypeQuery1), 
+	TargetClass(nullptr), TargetTraceChannel(ETraceTypeQuery::TraceTypeQuery1), BlockingTraceChannel(ETraceTypeQuery::TraceTypeQuery1), 
 	Target(nullptr), PlayerCharacter(nullptr), PlayerCamera(nullptr), bStartTimer(true), bDebug(false)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -33,6 +33,7 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 // Initialize component and activate targeting
 void UTargetingComponent::Initialize(ACharacter* InPlayerCharacter, UCameraComponent* InPlayerCamera)
 {
+	#if !UE_BUILD_SHIPPING
 	if (bDebug)
 	{
 		if (!IsValid(InPlayerCharacter))
@@ -47,7 +48,7 @@ void UTargetingComponent::Initialize(ACharacter* InPlayerCharacter, UCameraCompo
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Camera has not been set on Initialize!"));
 		}
 	}
-
+	#endif // !UE_BUILD_SHIPPING
 	// Set references
 	PlayerCharacter = InPlayerCharacter;
 	PlayerCamera = InPlayerCamera;
@@ -74,11 +75,13 @@ void UTargetingComponent::ActivateTargeting()
 	}
 	else
 	{
+		#if !UE_BUILD_SHIPPING
 		if (bDebug)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player Character is not valid!"));
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Character is not valid!"));
 		}
+		#endif // !UE_BUILD_SHIPPING
 	}
 }
 
@@ -112,7 +115,7 @@ void UTargetingComponent::SetTarget()
 
 		bool bHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, BlockingTraceChannel, false, ActorsToIgnore, EDrawDebugTrace::None, Hit, true);
 
-		if (HitItr.GetActor()->ActorHasTag(TargetTag) && bInVision && !bHit)
+		if ((HitItr.GetActor()->ActorHasTag(TargetTag) || HitItr.GetActor()->IsA(TargetClass)) && bInVision && !bHit)
 		{
 			Targets.Add(HitItr.GetActor());
 		}
@@ -149,12 +152,13 @@ bool UTargetingComponent::IsInVision(const AActor* Actor)
 	}
 	else
 	{
+		#if !UE_BUILD_SHIPPING
 		if (bDebug)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player Camera is not valid!"));
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Camera is not valid!"));
 		}
-
+		#endif // !UE_BUILD_SHIPPING
 		return true;
 	}
 }
@@ -202,11 +206,13 @@ float UTargetingComponent::ScoreTarget(const AActor* TargetToScore)
 		}
 		else
 		{
+			#if !UE_BUILD_SHIPPING
 			if (bDebug)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Player Camera is not valid!"));
 				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Camera is not valid!"));
 			}
+			#endif // !UE_BUILD_SHIPPING
 		}
 
 		// Distance to player character
@@ -230,11 +236,13 @@ float UTargetingComponent::ScoreTarget(const AActor* TargetToScore)
 		}
 		else
 		{
+			#if !UE_BUILD_SHIPPING
 			if (bDebug)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Player Character is not valid!"));
 				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Character is not valid!"));
 			}
+			#endif // !UE_BUILD_SHIPPING
 		}
 
 		// Calculate final score
