@@ -2,13 +2,14 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
+	"EngineVersion" : "5.0.0",
 	"FriendlyName": "TargetingSystem",
 	"Description": "",
 	"Category": "Other",
-	"CreatedBy": "",
+	"CreatedBy": "devran",
 	"CreatedByURL": "",
-	"DocsURL": "",
-	"MarketplaceURL": "",
+	"DocsURL": "{URL}",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/{OFFERID}",
 	"SupportURL": "",
 	"CanContainContent": true,
 	"IsBetaVersion": false,
@@ -18,7 +19,8 @@
 		{
 			"Name": "TargetingSystem",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms" : ["Win64"]
 		}
 	]
 }
