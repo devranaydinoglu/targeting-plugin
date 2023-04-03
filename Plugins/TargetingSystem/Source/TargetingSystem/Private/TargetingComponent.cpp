@@ -39,13 +39,11 @@ void UTargetingComponent::Initialize(ACharacter* InPlayerCharacter, UCameraCompo
 		if (!IsValid(InPlayerCharacter))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player Character has not been set on Initialize!"));
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Character has not been set on Initialize!"));
 		}
 		
 		if (!IsValid(InPlayerCamera))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player Camera has not been set on Initialize!"));
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Camera has not been set on Initialize!"));
 		}
 	}
 	#endif // !UE_BUILD_SHIPPING
@@ -54,7 +52,8 @@ void UTargetingComponent::Initialize(ACharacter* InPlayerCharacter, UCameraCompo
 	PlayerCamera = InPlayerCamera;
 
 	// Start the search timer
-	ActivateTargeting();
+	if (IsValid(PlayerCharacter))
+		ActivateTargeting();
 }
 
 // Start or unpause search timer
@@ -79,7 +78,6 @@ void UTargetingComponent::ActivateTargeting()
 		if (bDebug)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player Character is not valid!"));
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Character is not valid!"));
 		}
 		#endif // !UE_BUILD_SHIPPING
 	}
@@ -98,7 +96,7 @@ void UTargetingComponent::SetTarget()
 	TArray<AActor*> ActorsToIgnore;
 	TArray<FHitResult> Hits;
 
-	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), StartEnd, StartEnd, SearchRadius, TargetTraceChannel, false, ActorsToIgnore, EDrawDebugTrace::None, Hits, true);
+	UKismetSystemLibrary::SphereTraceMulti(this, StartEnd, StartEnd, SearchRadius, TargetTraceChannel, false, ActorsToIgnore, EDrawDebugTrace::None, Hits, true);
 
 	TArray<AActor*> Targets;
 
@@ -113,7 +111,7 @@ void UTargetingComponent::SetTarget()
 		FVector End = HitItr.GetActor()->GetActorLocation();
 		FHitResult Hit;
 
-		bool bHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, BlockingTraceChannel, false, ActorsToIgnore, EDrawDebugTrace::None, Hit, true);
+		bool bHit = UKismetSystemLibrary::LineTraceSingle(this, Start, End, BlockingTraceChannel, false, ActorsToIgnore, EDrawDebugTrace::None, Hit, true);
 
 		if ((HitItr.GetActor()->ActorHasTag(TargetTag) || HitItr.GetActor()->IsA(TargetClass)) && bInVision && !bHit)
 		{
@@ -156,7 +154,6 @@ bool UTargetingComponent::IsInVision(const AActor* Actor)
 		if (bDebug)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player Camera is not valid!"));
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Camera is not valid!"));
 		}
 		#endif // !UE_BUILD_SHIPPING
 		return true;
@@ -210,7 +207,6 @@ float UTargetingComponent::ScoreTarget(const AActor* TargetToScore)
 			if (bDebug)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Player Camera is not valid!"));
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Camera is not valid!"));
 			}
 			#endif // !UE_BUILD_SHIPPING
 		}
@@ -240,7 +236,6 @@ float UTargetingComponent::ScoreTarget(const AActor* TargetToScore)
 			if (bDebug)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Player Character is not valid!"));
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Player Character is not valid!"));
 			}
 			#endif // !UE_BUILD_SHIPPING
 		}
