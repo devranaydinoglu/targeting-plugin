@@ -8,10 +8,10 @@
 
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
-	: SearchRadius(0.0f), SearchInterval(0.0f), MaxHorizontalVisionAngle(0.0f), MaxVerticalVisionAngle(0.0f), 
-	CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), TargetTag(""), 
+	: PlayerCharacter(nullptr), PlayerCamera(nullptr), bStartTimer(true), SearchRadius(0.0f), SearchInterval(0.0f), MaxHorizontalVisionAngle(0.0f), 
+	MaxVerticalVisionAngle(0.0f), CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), TargetTag(""), 
 	TargetClass(nullptr), TargetTraceChannel(ETraceTypeQuery::TraceTypeQuery1), BlockingTraceChannel(ETraceTypeQuery::TraceTypeQuery1), 
-	Target(nullptr), PlayerCharacter(nullptr), PlayerCamera(nullptr), bStartTimer(true), bDebug(false)
+	Target(nullptr), bDebug(false)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -163,27 +163,27 @@ bool UTargetingComponent::IsInVision(const AActor* Actor)
 // Find most optimal target
 AActor* UTargetingComponent::FindOptimalTarget(TArray<AActor*> TargetsArray)
 {
-	if (TargetsArray.Num() > 0)
-	{
-		TArray<float> TargetScores;
-		TargetScores.Empty();
+	RankedTargets.Empty();
 
-		for (const AActor* TempTarget : TargetsArray)
-		{
-			TargetScores.Add(ScoreTarget(TempTarget));
-		}
-
-		int32 IndexOfMaxValue;
-		float MaxValue;
-
-		UKismetMathLibrary::MaxOfFloatArray(TargetScores, IndexOfMaxValue, MaxValue);
-
-		return TargetsArray[IndexOfMaxValue];
-	}
-	else
+	if (TargetsArray.IsEmpty())
 	{
 		return nullptr;
 	}
+
+	for (AActor* TargetIt : TargetsArray)
+	{
+		FTargetData TargetData;
+		TargetData.Target = TargetIt;
+		TargetData.Score = ScoreTarget(TargetIt);
+
+		RankedTargets.Add(TargetData);
+	}
+
+	RankedTargets.Sort([](FTargetData one, FTargetData two) {
+		return one.Score > two.Score;
+		});
+
+	return RankedTargets[0].Target;
 }
 
 // Score target on each criteria

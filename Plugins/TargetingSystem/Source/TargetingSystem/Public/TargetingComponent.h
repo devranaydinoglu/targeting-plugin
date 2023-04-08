@@ -9,6 +9,18 @@
 class UCameraComponent;
 enum ETraceTypeQuery;
 
+USTRUCT(BlueprintType)
+struct FTargetData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	AActor* Target;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Score;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TARGETINGSYSTEM_API UTargetingComponent : public UActorComponent
 {
@@ -22,6 +34,20 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
+	// Player character reference
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	ACharacter* PlayerCharacter;
+
+	// Player camera reference
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	UCameraComponent* PlayerCamera;
+
+	// Handle for search timer
+	FTimerHandle SearchTimerHandle;
+
+	// Used to start timer initially
+	bool bStartTimer;
+
 	// Radius around player character to find targets in
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	float SearchRadius;
@@ -70,20 +96,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
 	AActor* Target;
 
-	// Handle for search timer
-	FTimerHandle SearchTimerHandle;
-
-	// Player character reference
-	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	ACharacter* PlayerCharacter;
-
-	// Player camera reference
-	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	UCameraComponent* PlayerCamera;
-
-	// Used to start timer initially
-	bool bStartTimer;
-
+	// All targets currently in range ranked by their score
+	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	TArray<FTargetData> RankedTargets;
+	
 	// Enable the printing of warnings and errors if any are encountered
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	bool bDebug;
