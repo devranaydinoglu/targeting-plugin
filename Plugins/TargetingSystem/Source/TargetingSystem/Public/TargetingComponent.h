@@ -56,13 +56,13 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	float SearchInterval;
 	
-	// Max horizontal angle of camera direction in which targets will be detected
+	// Max horizontal angle of camera direction in which targets will be detected. Max should be the camera's FOV divided by 2
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
-	float MaxHorizontalVisionAngle;
+	float MaxHorizontalCameraAngle;
 
-	// Max vertical angle of camera direction in which targets will be detected
+	// Max vertical angle of camera direction in which targets will be detected. Max should be the camera's FOV divided by 3
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
-	float MaxVerticalVisionAngle;
+	float MaxVerticalCameraAngle;
 
 	// Determines how much the target's angle to the camera direction affects target scores
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0"), Category = "Targeting")
