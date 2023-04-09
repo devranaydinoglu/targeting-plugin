@@ -8,9 +8,9 @@
 
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
-	: PlayerCharacter(nullptr), PlayerCamera(nullptr), bStartTimer(true), SearchRadius(0.0f), SearchInterval(0.0f), MaxHorizontalVisionAngle(0.0f), 
-	MaxVerticalVisionAngle(0.0f), CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), TargetTag(""), 
-	TargetClass(nullptr), TargetTraceChannel(ETraceTypeQuery::TraceTypeQuery1), BlockingTraceChannel(ETraceTypeQuery::TraceTypeQuery1), 
+	: PlayerCharacter(nullptr), PlayerCamera(nullptr), bStartTimer(true), SearchRadius(0.0f), SearchInterval(0.0f), MaxHorizontalCameraAngle(0.0f), 
+	MaxVerticalCameraAngle(0.0f), CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), 
+	TargetTag(""), TargetClass(nullptr), TargetTraceChannel(ETraceTypeQuery::TraceTypeQuery1), BlockingTraceChannel(ETraceTypeQuery::TraceTypeQuery1), 
 	Target(nullptr), bDebug(false)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -141,7 +141,7 @@ bool UTargetingComponent::IsInVision(const AActor* Actor)
 		FRotator ActorDelta = UKismetMathLibrary::NormalizedDeltaRotator(LookAtRotation, PlayerCharacter->GetControlRotation());
 
 		// Check if target is within the vertical and horizontal vision
-		if (UKismetMathLibrary::Abs(ActorDelta.Pitch) <= MaxVerticalVisionAngle && UKismetMathLibrary::Abs(ActorDelta.Yaw) <= MaxHorizontalVisionAngle)
+		if (UKismetMathLibrary::Abs(ActorDelta.Pitch) <= MaxVerticalCameraAngle && UKismetMathLibrary::Abs(ActorDelta.Yaw) <= MaxHorizontalCameraAngle)
 		{
 			return true;
 		}
@@ -179,9 +179,7 @@ AActor* UTargetingComponent::FindOptimalTarget(TArray<AActor*> TargetsArray)
 		RankedTargets.Add(TargetData);
 	}
 
-	RankedTargets.Sort([](FTargetData one, FTargetData two) {
-		return one.Score > two.Score;
-		});
+	RankedTargets.Sort([](const FTargetData& a, const FTargetData& b) {return a.Score > b.Score;});
 
 	return RankedTargets[0].Target;
 }
@@ -196,10 +194,11 @@ float UTargetingComponent::ScoreTarget(const AActor* TargetToScore)
 
 		if (IsValid(PlayerCamera))
 		{
-			FVector CameraTargetUnitDirection = UKismetMathLibrary::GetDirectionUnitVector(PlayerCamera->GetComponentLocation(), TargetToScore->GetActorLocation());
-			float CameraTargetDotProduct = UKismetMathLibrary::Dot_VectorVector(PlayerCamera->GetForwardVector(), CameraTargetUnitDirection);
+			FVector CameraTargetUnitDirection = (TargetToScore->GetActorLocation() - PlayerCamera->GetComponentLocation()).GetSafeNormal();
+			float CameraTargetDotProduct = FVector::DotProduct(PlayerCamera->GetForwardVector(), CameraTargetUnitDirection);
+			float CameraTargetDegrees = FMath::Acos(CameraTargetDotProduct) * 180.0 / PI;
 
-			CameraDirectionScore = UKismetMathLibrary::MapRangeClamped(CameraTargetDotProduct, 0.0, 1.0, 1.0, 10.0) * CameraDirectionMultiplier;
+			CameraDirectionScore = UKismetMathLibrary::MapRangeClamped(CameraTargetDegrees, 45.0, 0.0, 1.0, 10.0) * CameraDirectionMultiplier;
 		}
 		else
 		{
@@ -225,9 +224,9 @@ float UTargetingComponent::ScoreTarget(const AActor* TargetToScore)
 			DistanceScore = UKismetMathLibrary::MapRangeClamped(Distance, 0.0, SearchRadius, 10.0, 1.0) * DistanceMultiplier;
 
 			// Angle to player character direction
-			FVector PlayerTargetUnitDirection = UKismetMathLibrary::GetDirectionUnitVector(PlayerCharacter->GetActorLocation(), TargetToScore->GetActorLocation());
-			float PlayerTargetDotProduct = UKismetMathLibrary::Dot_VectorVector(PlayerCharacter->GetActorForwardVector(), PlayerTargetUnitDirection);
-
+			FVector PlayerTargetUnitDirection = (TargetToScore->GetActorLocation() - PlayerCharacter->GetActorLocation()).GetSafeNormal();
+			float PlayerTargetDotProduct = FVector::DotProduct(PlayerCharacter->GetActorForwardVector(), PlayerTargetUnitDirection);
+			
 			PlayerDirectionScore = UKismetMathLibrary::MapRangeClamped(PlayerTargetDotProduct, 0.0, 1.0, 1.0, 10.0) * PlayerDirectionMultiplier;
 		}
 		else
