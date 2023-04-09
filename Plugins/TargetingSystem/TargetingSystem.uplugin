@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
+	"Version": 2,
+	"VersionName": "1.1",
 	"EngineVersion" : "5.0.0",
 	"FriendlyName": "TargetingSystem",
 	"Description": "",
@@ -9,7 +9,7 @@
 	"CreatedBy": "devran",
 	"CreatedByURL": "",
 	"DocsURL": "https://docs.google.com/document/d/1ehhcYcJGtyiPLdsURveVmQ1-4dwStQhW7xg5-gstakc/edit?usp=sharing",
-	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/{OFFERID}",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/3c9d107dfc06457b9c9e887147836460",
 	"SupportURL": "",
 	"CanContainContent": true,
 	"IsBetaVersion": false,
