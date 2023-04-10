@@ -9,7 +9,7 @@
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
 	: PlayerCharacter(nullptr), PlayerCamera(nullptr), bStartTimer(true), SearchRadius(0.0f), SearchInterval(0.0f), MaxHorizontalCameraAngle(0.0f), 
-	MaxVerticalCameraAngle(0.0f), CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), 
+	MaxVerticalCameraAngle(0.0f), MaxHorizontalPlayerHalfAngle(0.0f), CameraDirectionMultiplier(0.0f), DistanceMultiplier(0.0f), PlayerDirectionMultiplier(0.0f), 
 	TargetTag(""), TargetClass(nullptr), TargetTraceChannel(ETraceTypeQuery::TraceTypeQuery1), BlockingTraceChannel(ETraceTypeQuery::TraceTypeQuery1), 
 	Target(nullptr), bDebug(false)
 {
@@ -137,11 +137,17 @@ bool UTargetingComponent::IsInVision(const AActor* Actor)
 {
 	if (IsValid(PlayerCamera))
 	{
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCamera->GetComponentLocation(), Actor->GetActorLocation());
-		FRotator ActorDelta = UKismetMathLibrary::NormalizedDeltaRotator(LookAtRotation, PlayerCharacter->GetControlRotation());
+		FRotator CameraLookAtRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCamera->GetComponentLocation(), Actor->GetActorLocation());
+		FRotator CameraActorDelta = UKismetMathLibrary::NormalizedDeltaRotator(CameraLookAtRotation, PlayerCharacter->GetControlRotation());
 
+		FRotator CharacterLookAtRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCharacter->GetActorLocation(), Actor->GetActorLocation());
+		FRotator CharacterActorDelta = UKismetMathLibrary::NormalizedDeltaRotator(CharacterLookAtRotation, PlayerCharacter->GetActorRotation());
+
+		bool bInCameraVision = UKismetMathLibrary::Abs(CameraActorDelta.Pitch) <= MaxVerticalCameraAngle && UKismetMathLibrary::Abs(CameraActorDelta.Yaw) <= MaxHorizontalCameraAngle;
+		bool bInCharacterVision = UKismetMathLibrary::Abs(CharacterActorDelta.Yaw) <= MaxHorizontalPlayerHalfAngle;
+		
 		// Check if target is within the vertical and horizontal vision
-		if (UKismetMathLibrary::Abs(ActorDelta.Pitch) <= MaxVerticalCameraAngle && UKismetMathLibrary::Abs(ActorDelta.Yaw) <= MaxHorizontalCameraAngle)
+		if (bInCameraVision && bInCharacterVision)
 		{
 			return true;
 		}
