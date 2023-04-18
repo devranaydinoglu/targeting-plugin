@@ -15,10 +15,10 @@ struct FTargetData
 	GENERATED_BODY()
 	FTargetData() : Target(nullptr), Score(0.0f) {};
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
 	AActor* Target;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
 	float Score;
 };
 
