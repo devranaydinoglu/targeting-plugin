@@ -5,6 +5,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "TimerManager.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
