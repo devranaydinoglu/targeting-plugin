@@ -99,7 +99,7 @@ protected:
 	TEnumAsByte<ETraceTypeQuery> BlockingTraceChannel;
 
 	// Target reference.
-	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	AActor* Target;
 
 	// All targets currently in range ranked by their score.
