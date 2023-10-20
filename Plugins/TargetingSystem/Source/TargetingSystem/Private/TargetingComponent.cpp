@@ -126,10 +126,23 @@ void UTargetingComponent::SetTarget()
 
 	if (IsValid(TempTarget))
 	{
-		Target = TempTarget;
+		if (IsValid(Target))
+		{
+			if (TempTarget->GetFName() != Target->GetFName())
+			{
+				OnTargetFound.Broadcast();
+				Target = TempTarget;
+			}
+		}
+		else
+		{
+			Target = TempTarget;
+			OnTargetFound.Broadcast();
+		}
 	}
 	else
 	{
+		if (IsValid(Target)) OnTargetLost.Broadcast();
 		Target = nullptr;
 	}
 }

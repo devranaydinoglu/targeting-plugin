@@ -9,6 +9,9 @@
 class UCameraComponent;
 enum ETraceTypeQuery;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetFoundDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetLostDelegate);
+
 USTRUCT(BlueprintType)
 struct FTargetData
 {
@@ -109,6 +112,12 @@ protected:
 	// Enable the printing of warnings and errors if any are encountered.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
 	bool bDebug;
+
+	UPROPERTY(BlueprintAssignable)
+	FTargetFoundDelegate OnTargetFound;
+
+	UPROPERTY(BlueprintAssignable)
+	FTargetLostDelegate OnTargetLost;
 
 protected:
 	// Called when the game starts
