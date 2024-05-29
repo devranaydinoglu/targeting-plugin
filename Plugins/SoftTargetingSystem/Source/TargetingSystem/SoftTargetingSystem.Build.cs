@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class TargetingSystem : ModuleRules
+public class SoftTargetingSystem : ModuleRules
 {
-	public TargetingSystem(ReadOnlyTargetRules Target) : base(Target)
+	public SoftTargetingSystem(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
