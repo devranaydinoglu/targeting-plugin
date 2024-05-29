@@ -26,7 +26,7 @@ struct FTargetData
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TARGETINGSYSTEM_API UTargetingComponent : public UActorComponent
+class SOFTTARGETINGSYSTEM_API UTargetingComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

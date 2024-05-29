@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FTargetingSystemModule : public IModuleInterface
+class FSoftTargetingSystemModule : public IModuleInterface
 {
 public:
 
