@@ -9,7 +9,7 @@
 class UCameraComponent;
 enum ETraceTypeQuery;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetFoundDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetFoundDelegate, AActor*, FoundTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetLostDelegate);
 
 USTRUCT(BlueprintType)
@@ -108,10 +108,6 @@ protected:
 	// All targets currently in range ranked by their score.
 	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
 	TArray<FTargetData> RankedTargets;
-	
-	// Enable the printing of warnings and errors if any are encountered.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Targeting")
-	bool bDebug;
 
 	UPROPERTY(BlueprintAssignable)
 	FTargetFoundDelegate OnTargetFound;
