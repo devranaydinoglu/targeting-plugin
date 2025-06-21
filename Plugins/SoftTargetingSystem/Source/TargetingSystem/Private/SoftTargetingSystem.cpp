@@ -17,4 +17,4 @@ void FSoftTargetingSystemModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FSoftTargetingSystemModule, TargetingSystem)
+IMPLEMENT_MODULE(FSoftTargetingSystemModule, SoftTargetingSystem)
